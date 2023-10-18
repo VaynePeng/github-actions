@@ -1,6 +1,17 @@
 {
   "extends": "next/core-web-vitals",
   "rules": {
-    "linebreak-style": ["error", "unix"]
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "semi": [
+      "error",
+      "never"
+    ]
   }
 }

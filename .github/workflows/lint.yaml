@@ -1,0 +1,11 @@
+name: Lint
+run-name: Lint Action
+on:
+  push
+jobs:
+  ESLint:
+    name: ESLint job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run ESLint
+        run: pnpm eslint

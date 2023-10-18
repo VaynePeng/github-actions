@@ -1,5 +1,5 @@
-# name: README
-# run-name: README Action
+name: README
+run-name: README Action
 
 # 单个事件
 # on: push

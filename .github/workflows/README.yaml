@@ -1,0 +1,115 @@
+# name: README
+# run-name: README Action
+
+# 单个事件
+# on: push
+
+# 多个事件
+# on: [push, pull, fork]
+
+# 使用活动类型
+# 使用 on.<event_name>.types 定义将触发工作流运行的活动类型
+# 例如，当标签为 created、edited 或 deleted 时会触发 label。 通过 types 关键词可缩小触发工作流运行的活动类型的范围。 如果只有一种活动类型可触发 Webhook 事件，则不需要 types 关键字。
+# issue_comment 事件具有 created、edited 和 deleted 活动类型。 如果工作流在 label 事件上触发，则每当创建、编辑或删除标签时，它都会运行。 如果为 created 事件指定 label 活动类型，则工作流将在创建标签时运行，但不会在编辑或删除标签时运行
+# on:
+#   label:
+#     types:
+#       - created
+
+# 使用筛选器
+# push 事件具有 branches 筛选器，该筛选器仅在发生目标为与 branches 筛选器匹配的分支的推送时（而不是在发生任何推送时）运行工作流
+# on:
+#   push:
+#     branches:
+#       - 'releases/**'
+
+# 将活动类型和筛选器用于多个事件
+# 如果为事件指定活动类型或筛选器，并且针对多个事件指定工作流触发器，则必须单独配置每个事件
+# 具有以下 on 值的工作流将在以下情况下运行：
+# 创建标签
+# 推送到存储库中的 master 分支
+# on:
+#   label:
+#     types:
+#       - created
+#   push:
+#     branches:
+#       - master
+
+# on.<pull_request|pull_request_target>.<branches|branches-ignore>
+# 使用 pull_request 和 pull_request_target 事件时，可以将工作流配置为仅针对面向特定分支的拉取请求运行
+# 如果要包含分支名称模式或同时包含和排除分支名称模式，请使用 branches 筛选器。 只希望排除分支名称时，请使用 branches-ignore 筛选器。 不能对工作流中的同一事件同时使用 branches 和 branches-ignore 筛选器
+# 每当有针对面向以下内容拉取请求的 pull_request 事件时，以下工作流都会运行：
+# *************
+# 名为 main 的分支 (refs/heads/main)
+# 名为 mona/octocat 的分支 (refs/heads/mona/octocat)
+# 名称以 releases/ 开头的分支，如 releases/10 (refs/heads/releases/10)
+# on:
+#   pull_request:
+#     branches:    
+#       - main
+#       - 'mona/octocat'
+#       - 'releases/**'
+# *************
+# 当模式与 branches-ignore 模式匹配时，工作流将不会运行
+# on:
+#   pull_request:
+#     branches-ignore:    
+#       - 'mona/octocat'
+#       - 'releases/**-alpha'
+# 不能在单个工作流中使用 branches 和 branches-ignore 筛选同一事件。 如果要同时包括和排除单个事件的分支模式，请使用 branches 筛选器以及 ! 字符来指示应排除哪些分支或标记
+# on:
+#   pull_request:
+#     branches:    
+#       - 'releases/**'
+#       - '!releases/**-alpha' # 排除 releases/**-alpha 分支
+
+# on.push.<branches|tags|branches-ignore|tags-ignore>
+# 与 pull_request 和 pull_request_target 事件一样，push 事件也可以使用 branches 和 branches-ignore 筛选器来仅针对面向特定分支的推送运行工作流
+# *************
+# 如果要包含标记名称模式或要同时包含和排除标记名称模式，请使用 tags 筛选器。 只需要排除标记名称模式时，请使用 tags-ignore 筛选器。 不能对工作流中的同一事件同时使用 tags 和 tags-ignore 筛选器
+# on:
+#   push:
+#     tags:        
+#       - v2
+#       - v1.*
+# *************
+# on:
+#   push:
+#     tags-ignore:        
+#       - v2
+#       - v1.*
+
+# on.<push|pull_request|pull_request_target>.<paths|paths-ignore>
+# 使用 push 和 pull_request 事件时，可以配置工作流以根据更改的文件路径运行。 路径筛选器不会针对标记的推送进行评估
+# 如果想要包括文件路径模式或想要同时包括和排除文件路径模式，请使用 paths 筛选器。 如果只想排除文件路径模式，请使用 paths-ignore 筛选器。 不能对工作流中的同一事件同时使用 paths 和 paths-ignore 筛选器。 如果要同时包括和排除单个事件的路径模式，请使用前缀为 ! 字符的 paths 筛选器来指示应排除哪些路径
+# *************
+# 包含路径 如果至少一个路径与 paths 筛选器中的模式匹配，则工作流将运行
+# 只要推送 JavaScript 文件 (.js)，就会运行以下工作流
+# on:
+#   push:
+#     paths:
+#       - '**.js'
+# *************
+# 排除路径 当所有路径名称匹配 paths-ignore 中的模式时，工作流不会运行
+# 具有以下路径筛选器的工作流将仅在 push 事件上运行，这些事件包括至少一个位于存储库根目录的 docs 目录外的文件
+# on:
+#   push:
+#     paths-ignore:
+#       - 'docs/**'
+# *************
+# 包括和排除路径
+# on:
+#   push:
+#     paths:
+#       - 'sub-project/**'
+#       - '!sub-project/docs/**'
+
+# 注意： 如果推送超过 1,000 项提交，或者如果 GitHub 因超时未生成差异，则工作流将始终运行
+# GitHub 会针对推送使用双点差异，针对拉取请求使用三点差异，生成已更改文件列表：
+# 拉取请求： 三点差异比较主题分支的最近版本与其中使用基本分支最新同步主题分支的提交。
+# 推送到现有分支： 双点差异直接相互比较头部和基础 SHA。
+# 推送到新分支： 根据已推送最深提交的上级父项的两点差异。
+# 差异限制为 300 个文件。 如果更改的文件与过滤器返回的前 300 个文件不匹配，工作流程将不会运行
+
+# on.schedule
